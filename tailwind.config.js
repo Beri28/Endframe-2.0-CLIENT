@@ -19,6 +19,8 @@ export default {
       fontFamily: {
         roboto: ['Roboto', 'sans-serif'],
         openSans: ['Open Sans', 'sans-serif'],
+        'nunito': ['nunito', 'sans-serif'],
+        'MyFont': ['MyFont"', 'serif'] // Ensure fonts with spaces have " " surrounding it.
       },
       animation: {
         'jump-in': 'jumpIn 2s ease-in-out forwards',

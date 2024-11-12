@@ -36,8 +36,8 @@ interface FeatureCardProps {
   description: string;
   hasLink?: boolean;
 }
-const twitter = <SocialIcon url="https://x.com/NevilleAjim" />
-const instagram = <SocialIcon url="https://instagram.com/NevilleAjim" />
+export const twitter = <SocialIcon url="https://x.com/NevilleAjim" />
+export const instagram = <SocialIcon url="https://instagram.com/NevilleAjim" />
 
 export const CustomButton: React.FC<CustomButtonProps> = ({ children, className = '', ...props }) => {
   return (
@@ -83,7 +83,7 @@ const Home: React.FC = () => {
         <div className="hidden md:flex space-x-8 font-sans-serif text-[1.2rem]">
           <a href="#" className="text-gray-600 hover:text-gray-900">Stories</a>
           <a href="/aboutUs" className="text-gray-600 hover:text-gray-900">About</a>
-          <a href="#" className="text-gray-600 hover:text-gray-900">Services</a>
+          <a href="/services" className="text-gray-600 hover:text-gray-900">Services</a>
           <a href="#" className="text-gray-600 hover:text-gray-900">Contact</a>
         </div>
         
@@ -152,7 +152,7 @@ const Home: React.FC = () => {
                 Créez le site web de vos rêves en toute simplicité. Nos outils intuitifs vous permettent de personnaliser des modèles époustouflants, de choisir parmi une large gamme de polices de caractères et de couleurs, et de créer une présence en ligne unique qui reflète votre marque.
               </p>
               <CustomButton className="bg-purple-600 hover:bg-purple-700 text-white px-4 md:px-6 py-2 rounded text-sm md:text-base"
-                        onClick={() => navigate("/features")}>
+                        onClick={() => navigate("/templates")}>
                 Learn About Design Tools
               </CustomButton>
             </div>
@@ -277,7 +277,7 @@ const Home: React.FC = () => {
           {/* CTA Button */}
           <div className="text-center mt-8 md:mt-12">
             <button
-              onClick={() => navigate('/register')}
+              onClick={() => navigate('/templates')}
               className="bg-purple-600 text-white px-6 md:px-8 py-2 md:py-3 rounded-lg hover:bg-purple-700 transition-colors duration-300 shadow-md text-sm md:text-base"
             >
               Start Discovering
@@ -306,7 +306,7 @@ const Home: React.FC = () => {
           <div className="flex pb-5 justify-center"> 
             <ul className="space-y-1  text-center">
               <li className="font-bold">Information</li>
-              <li>Pricing</li>
+              <li >Pricing</li>
               <li>Services</li>
               <li>About</li>
               <li>Search</li>
