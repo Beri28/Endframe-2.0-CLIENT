@@ -1,26 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Instagram, Twitter, Youtube, Globe, Calendar, Play, Pause, SkipForward, SkipBack, Volume2, Home, Music, Users, Award, MessageSquare, Settings, Menu } from "lucide-react";
+import { AuthContext } from "../../Context/AuthContext";
 
-const CustomCard = ({ children, className = "" }) => (
+const CustomCard = ({ children, className = "" }:{children:any,className:string}) => (
   <div className={`bg-white rounded-lg shadow-sm ${className}`}>
     {children}
   </div>
 );
 
-const CustomCardHeader = ({ children, className = "" }) => (
+const CustomCardHeader = ({ children, className = "" }:{children:any,className:string}) => (
   <div className={`p-6 border-b ${className}`}>
     {children}
   </div>
 );
 
-const CustomCardContent = ({ children, className = "" }) => (
+const CustomCardContent = ({ children, className = "" }:{children:any,className:string}) => (
   <div className={`p-6 ${className}`}>
     {children}
   </div>
 );
 
-const CustomSlider = ({ value, onChange, max = 100, step = 1 }) => {
-  const handleChange = (e) => {
+const CustomSlider = ({ value, onChange, max = 100, step = 1 }:{value:any,onChange:any,max:number,step:number}) => {
+  const handleChange = (e:any) => {
     onChange([parseInt(e.target.value)]);
   };
 
@@ -48,6 +49,7 @@ const CustomSlider = ({ value, onChange, max = 100, step = 1 }) => {
 };
 
 const ProfilePage = () => {
+    const {state:{username}}=useContext(AuthContext)
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [volume, setVolume] = useState([75]);
@@ -105,7 +107,7 @@ const ProfilePage = () => {
           {socialLinks.map((social, index) => (
             social.followers && (
               <CustomCard key={index} className="hover:shadow-lg transition-shadow">
-                <CustomCardContent>
+                <CustomCardContent className="">
                   <div className="flex items-center space-x-4">
                     <social.icon className="w-8 h-8 text-indigo-600" />
                     <div>
@@ -123,11 +125,11 @@ const ProfilePage = () => {
 
     const MusicContent = () => (
       <div className="space-y-6">
-        <CustomCard>
-          <CustomCardHeader>
+        <CustomCard className="">
+          <CustomCardHeader className="">
             <h3 className="text-lg font-semibold">My Tracks</h3>
           </CustomCardHeader>
-          <CustomCardContent>
+          <CustomCardContent className="">
             <div className="space-y-4">
               {topTracks.map((track, index) => (
                 <div key={index} 
@@ -153,11 +155,11 @@ const ProfilePage = () => {
 
     const EventsContent = () => (
       <div className="space-y-6">
-        <CustomCard>
-          <CustomCardHeader>
+        <CustomCard className="">
+          <CustomCardHeader className="">
             <h3 className="text-lg font-semibold">All Events</h3>
           </CustomCardHeader>
-          <CustomCardContent>
+          <CustomCardContent className="">
             <div className="space-y-4">
               {upcomingEvents.map((event, index) => (
                 <div key={index} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
@@ -202,7 +204,7 @@ const ProfilePage = () => {
                   alt="Profile"
                   className={`${isSidebarOpen ? 'w-16 h-16' : 'w-10 h-10'} rounded-full object-cover transition-all duration-300`}
                 />
-                {isSidebarOpen && <h1 className="font-bold text-xl">DMK Studio</h1>}
+                {isSidebarOpen && <h1 className="font-bold text-xl">{username}</h1>}
               </div>
               <button 
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}

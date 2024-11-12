@@ -1,35 +1,82 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import './Index.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios'
+import { AuthContext } from '../../Context/AuthContext';
 
+export interface loginResponse{
+    username:string
+    id:string
+    token:string
+}
 const Signup = () => {
-  const [, setEmail] = useState('');
-  const [, setPassword] = useState('');
-
-  const signup = () => {
-    //
+  const { dispatch } = useContext(AuthContext)
+  const navigate=useNavigate()
+  const [username,setUsername] = useState<string>('');
+  const [ email,setEmail] = useState<string>('');
+  const [ password,setPassword] = useState<string>('');
+  const [ confirmPassword,setConfirmPassword] = useState<string>('');
+  const [different,setDifferent]=useState<boolean>(false)
+  const signup =async (e:any) => {
+    e.preventDefault()
+    console.log(username,email,password,confirmPassword)
+    if(password!==confirmPassword){
+      setDifferent(true)
+      return
+    }
+    try{
+      let res=await axios.post<loginResponse>('http://localhost:8080/api/register',{username,email,password:confirmPassword})
+      if(res){
+          console.log(res.data)
+            //decode the token from the response
+            const token = res.data.token
+            const id = res.data.id
+            const username=res.data.username
+            localStorage.setItem(
+              'endframe-2.0',
+              JSON.stringify({
+                  id: id,
+                  username,
+                  isAuthenticated: true,
+                  token: token
+              })
+          )
+          dispatch({ type: 'TOGGLE_AUTH', payload: {
+            id: id,
+            username,
+            isAuthenticated: true,
+            token: token
+        } })
+        navigate('/profile')
+      }
+    }catch(error){
+      console.log(error)
+    }
   };
-
+  useEffect(()=>{
+    setDifferent(false)
+  },[])
   return (
     <div className="flex min-h-screen">
       {/* Left Panel */}
-      <div className="w-1/2 bg-[#5D5DFF] p-12 relative overflow-hidden">
+      <div className="w-1/2 bg-purple-500 p-12 relative overflow-hidden">
         <h2 className="brand-text">Market Your Brand With Us!</h2>
         
         <div className="circular-images">
           {/* Main large circle - Woman with jewelry */}
           <div className=" ">
             <img 
-              src="./../assets/a.png" 
+              src="/src/assets/Cameroon-music-lovers.jpg" 
               alt=" " 
-              className="w-full h-full object-cover"
+              style={{filter:'grayscale(1)'}}
+              className="w-full h-full object-cover rounded-xl"
             />
           </div>
           
           {/* Medium circle - Man with glasses */}
           <div className="circle-secondary">
             <img 
-              src="/src/assets/a1.jpg" 
+              src="/src/assets/epk2.png" 
               alt=" " 
               className="w-full h-full object-cover"
             />
@@ -37,7 +84,7 @@ const Signup = () => {
           
           <div className="circle-secondary">
             <img 
-              src="/src/assets/a1.jpg" 
+              src="/src/assets/epk2.png" 
               alt=" " 
               className="w-full h-full object-cover"
             />
@@ -45,7 +92,7 @@ const Signup = () => {
           {/* Small circle - Drum */}
           <div className="circle-accent bg-[#87CEEB]">
             <img 
-              src="/src/assets/a2.jpg" 
+              src="/src/assets/vizu.jpeg" 
               alt=" " 
               className="w-full h-full object-cover"
             />
@@ -75,7 +122,9 @@ const Signup = () => {
               <input
                 type="text"
                 className="form-group-input"
-                placeholder=''
+                placeholder='Enter artist name'
+                value={username}
+                onChange={(e)=>setUsername(e.target.value)}
                 required
               />
             </div>
@@ -85,7 +134,8 @@ const Signup = () => {
               <input
                 type="email"
                 className="form-group-input"
-                placeholder=''
+                placeholder='Enter email'
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
@@ -96,7 +146,8 @@ const Signup = () => {
               <input
                 type="password"
                 className="form-group-input"
-                placeholder=''
+                placeholder='password'
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
@@ -107,18 +158,22 @@ const Signup = () => {
               <input
                 type="password"
                 className="form-group-input"
-                placeholder=''
+                placeholder='Confirm password'
+                value={confirmPassword}
+                onChange={(e)=>setConfirmPassword(e.target.value)}
                 required
               />
             </div>
-
-            <button type="submit" className="submit-button">
+              {different &&
+              <p className='text-red-300 text-sm'>Passwords should be same in both password fields</p>
+              }
+            <button type='submit' className="submit-button bg-purple-500 hover:bg-purple-400 hover:shadow-xl">
               Create Account
             </button>
           </form>
 
           <div className="social-buttons-container">
-            <button className="social-button">
+            <button className="social-button hover:border-purple-500">
               <svg className="social-icon" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -128,7 +183,7 @@ const Signup = () => {
               <span>Signup with Google</span>
             </button>
 
-            <button className="social-button flex items-center space-x-2">
+            <button className="social-button flex items-center space-x-2 hover:border-purple-500">
               <svg className="social-icon w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <defs>
                   <linearGradient id="instagramGradient" x1="0%" y1="0%" x2="100%" y2="100%">

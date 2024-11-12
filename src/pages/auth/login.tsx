@@ -1,35 +1,69 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import './Index.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { loginResponse } from './register';
+import { AuthContext } from '../../Context/AuthContext';
 
 const Login = () => {
-  const [, setEmail] = useState('');
-  const [, setPassword] = useState('');
+  const navigate=useNavigate()
+  const { dispatch } = useContext(AuthContext)
+  const [ email,setEmail] = useState<string>('');
+  const [ password,setPassword] = useState<string>('');
 
-  const signup = () => {
-    //
+  const signup =async (e:any) => {
+    e.preventDefault()
+    console.log(email,password)
+    try{
+      let res=await axios.post<loginResponse>('http://localhost:8080/api/login',{email,password})
+      if(res){
+          console.log(res.data)
+            //decode the token from the response
+            const token = res.data.token
+            const id = res.data.id
+            const username=res.data.username
+            localStorage.setItem(
+              'endframe-2.0',
+              JSON.stringify({
+                  id: id,
+                  username,
+                  isAuthenticated: true,
+                  token: token
+              })
+          )
+          dispatch({ type: 'TOGGLE_AUTH', payload: {
+            id: id,
+            username,
+            isAuthenticated: true,
+            token: token
+          } })
+          navigate('/profile')
+      }
+    }catch(error){
+      console.log(error)
+    }
   };
-
+  // bg-[#5D5DFF]
   return (
     <div className="flex min-h-screen">
       {/* Left Panel */}
-      <div className="w-1/2 bg-[#5D5DFF] p-12 relative overflow-hidden">
+      <div className="w-1/2 bg-purple-500 p-12 relative overflow-hidden">
         <h2 className="brand-text">Market Your Brand With Us!</h2>
         
         <div className="circular-images">
           {/* Main large circle - Woman with jewelry */}
           <div className=" ">
             <img 
-              src="./../assets/a.png" 
+              src="/src/assets/manudibango03.jpg" 
               alt=" " 
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-xl"
             />
           </div>
           
           {/* Medium circle - Man with glasses */}
           <div className="circle-secondary">
             <img 
-              src="/src/assets/a1.jpg" 
+              src="/src/assets/manudibango03.jpg" 
               alt=" " 
               className="w-full h-full object-cover"
             />
@@ -37,7 +71,7 @@ const Login = () => {
           
           <div className="circle-secondary">
             <img 
-              src="/src/assets/a1.jpg" 
+              src="/src/assets/jovi.jpeg" 
               alt=" " 
               className="w-full h-full object-cover"
             />
@@ -45,7 +79,7 @@ const Login = () => {
           {/* Small circle - Drum */}
           <div className="circle-accent bg-[#87CEEB]">
             <img 
-              src="/src/assets/a2.jpg" 
+              src="/src/assets/epk.webp" 
               alt=" " 
               className="w-full h-full object-cover"
             />
@@ -70,7 +104,7 @@ const Login = () => {
           <h1 className="text-2xl font-semibold mb-8">Login</h1>
           
           <form onSubmit={signup} className="space-y-6">
-            <div className="form-group">
+            {/* <div className="form-group">
               <label className="form-group-label">Band Name/Artist Name</label>
               <input
                 type="text"
@@ -78,14 +112,15 @@ const Login = () => {
                 placeholder=''
                 required
               />
-            </div>
+            </div> */}
 
             <div className="form-group">
               <label className="form-group-label">Email</label>
               <input
                 type="email"
                 className="form-group-input"
-                placeholder=''
+                placeholder='Enter email'
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
@@ -96,19 +131,20 @@ const Login = () => {
               <input
                 type="password"
                 className="form-group-input"
-                placeholder=''
+                placeholder='Enter password'
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
 
-            <button type="submit" className="submit-button">
+            <button type="submit" className="submit-button bg-purple-500 hover:bg-purple-400 hover:shadow-xl">
               Login
             </button>
           </form>
 
           <div className="social-buttons-container">
-            <button className="social-button">
+            <button className="social-button ">
               <svg className="social-icon" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
