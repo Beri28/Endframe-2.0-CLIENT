@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { ButtonHTMLAttributes, ReactNode, useState } from 'react';
 import landing from "../assets/landing.png";
 import r from "../assets/R.jpeg";
@@ -89,10 +89,10 @@ const Home: React.FC = () => {
         <button className="text-xl font-[cursive] font-bold" onClick={() => navigate("/")}>CAMTUNE</button>
         
         <div className="hidden md:flex space-x-8 font-sans-serif text-[1.2rem]">
-          <a href="#" className="text-gray-600 hover:text-gray-900">Stories</a>
-          <a href="/aboutUs" className="text-gray-600 hover:text-gray-900">About</a>
+          <Link to='about' className="text-gray-600 hover:text-gray-900" >About</Link>
+          {/* <a href="/aboutUs" className="text-gray-600 hover:text-gray-900">About</a> */}
           <a href="#" className="text-gray-600 hover:text-gray-900">Services</a>
-          <a href="#" className="text-gray-600 hover:text-gray-900">Contact</a>
+          <a href="#footer" className="text-gray-600 hover:text-gray-900">Contact</a>
         </div>
         
         <div className="flex items-center space-x-2 md:space-x-4">
@@ -287,7 +287,7 @@ const Home: React.FC = () => {
           {/* CTA Button */}
           <div className="text-center mt-8 md:mt-12">
             <button
-              onClick={() => navigate('/search')}
+              onClick={() => navigate('/artists')}
               className="bg-purple-600 text-white px-6 md:px-8 py-2 md:py-3 rounded-lg hover:bg-purple-700 transition-colors duration-300 shadow-md text-sm md:text-base"
             >
               Start Discovering
@@ -297,7 +297,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Footer */}
-      <footer className="relative z-10 bg-neutral-200 mt-8 pt-8 rounded-lg">
+      <footer className="relative z-10 bg-neutral-200 mt-8 pt-8 rounded-lg" id="footer">
         {/* Top Section */}
         <div className="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 md:gap-8 lg:gap-2 md:p-5 font-sans-serif">
         <div className="flex pb-5 justify-center">

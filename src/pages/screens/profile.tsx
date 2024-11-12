@@ -1,6 +1,9 @@
 import { useState, useEffect, useContext } from "react";
 import { Instagram, Twitter, Youtube, Globe, Calendar, Play, Pause, SkipForward, SkipBack, Volume2, Home, Music, Users, Award, MessageSquare, Settings, Menu } from "lucide-react";
 import { AuthContext } from "../../Context/AuthContext";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { CustomButton } from "../Home";
+import landing from "../../assets/Cameroon-music-lovers.jpg";
 
 const CustomCard = ({ children, className = "" }:{children:any,className:string}) => (
   <div className={`bg-white rounded-lg shadow-sm ${className}`}>
@@ -49,6 +52,8 @@ const CustomSlider = ({ value, onChange, max = 100, step = 1 }:{value:any,onChan
 };
 
 const ProfilePage = () => {
+    const navigate = useNavigate();
+    const { state } = useLocation();
     const {state:{username}}=useContext(AuthContext)
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -102,7 +107,8 @@ const ProfilePage = () => {
     }, [isPlaying, topTracks.length]);
 
     const DashboardContent = () => (
-      <div className="space-y-6">
+      <div className="space-y-6 h-fit">
+        <p className="text-lg">Social Media</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {socialLinks.map((social, index) => (
             social.followers && (
@@ -193,103 +199,96 @@ const ProfilePage = () => {
     };
 
     return (
-      <div className="h-screen flex overflow-hidden bg-gray-100">
+      <div className="flex bg-gray-100">
         {/* Sidebar */}
-        <div className={`${isSidebarOpen ? 'w-64' : 'w-20'} bg-white shadow-lg transition-all duration-300`}>
-          <div className="h-full flex flex-col">
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <img
-                  src="/src//assets/aa.jpeg"
-                  alt="Profile"
-                  className={`${isSidebarOpen ? 'w-16 h-16' : 'w-10 h-10'} rounded-full object-cover transition-all duration-300`}
-                />
-                {isSidebarOpen && <h1 className="font-bold text-xl">{username}</h1>}
-              </div>
-              <button 
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
-              >
-                <Menu className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <nav className="flex-1 pt-4">
-              {navigationItems.map((item, index) => (
-                <button
-                  key={index}
-                  onClick={() => setActiveSection(item.label)}
-                  className={`w-full flex items-center px-4 py-3 space-x-3
-                    ${activeSection === item.label ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:bg-gray-50'}
-                    transition-colors duration-200`}
-                >
-                  <item.icon className="w-5 h-5" />
-                  {isSidebarOpen && <span>{item.label}</span>}
-                </button>
-              ))}
-            </nav>
-
-            {/* Mini Player */}
-            <div className="p-4 border-t">
-              <div className={`flex items-center space-x-3 ${!isSidebarOpen && 'justify-center'}`}>
-                <img
-                  src="/api/placeholder/48/48"
-                  alt="Current Track"
-                  className="w-12 h-12 rounded-lg object-cover"
-                />
-                {isSidebarOpen && (
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{topTracks[currentTrackIndex].title}</p>
-                    <p className="text-xs text-gray-500">{topTracks[currentTrackIndex].duration}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col ">
           {/* Top Bar */}
-          <header className="bg-white shadow-sm">
-            <div className="px-6 py-4 flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">{activeSection}</h2>
-              <div className="flex items-center space-x-4">
-                <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                  New Release
-                </button>
+          {/* Navigation */}
+          <nav className="flex items-center justify-between px-4 md:px-20 py-4 ">
+            <button className="text-xl font-[cursive] font-bold" onClick={() => navigate("/")}>CAMTUNE</button>
+            
+            <div className="hidden md:flex space-x-8 font-sans-serif text-[1.2rem]">
+              <Link to='about' className="text-gray-600 hover:text-gray-900" >About</Link>
+              {/* <a href="/aboutUs" className="text-gray-600 hover:text-gray-900">About</a> */}
+              <a href="#" className="text-gray-600 hover:text-gray-900">Services</a>
+              <a href="#footer" className="text-gray-600 hover:text-gray-900">Contact</a>
+            </div>
+            
+            <div className="flex items-center space-x-2 md:space-x-4">
+              <CustomButton 
+                className="border border-purple-500 text-purple-700 hover:bg-gray-100 px-2 md:px-4 py-2 rounded shadow text-sm md:text-base"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </CustomButton>
+              <CustomButton className="hidden sm:flex border border-purple-500 text-purple-700 hover:bg-gray-100 px-2 md:px-4 py-2 rounded shadow text-sm md:text-base"
+                onClick={() => navigate("/pricing")}>
+                Pricing
+              </CustomButton>
+            </div>
+          </nav>
+          <div className=" px-4 md:px-20">
+            {/* Hero Section */}
+            <div className="relative py-16">
+              <div className="absolute inset-0">
+                <img 
+                  src={state.image} 
+                  className="w-full h-full object-cover"
+                  alt="Landing background"
+                />
+                <div className="absolute inset-0 bg-black/50" />
+              </div>
+
+              <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4">
+                <h1 className="text-3xl md:text-5xl font-bold mb-4 animate-jump-in font-[cursive]">
+                  {state.name}
+                </h1>
+                <p className="text-base md:text-lg-[2] mb-8 max-w-2xl font-sans-serif">
+                  {state.bio}
+                </p>
+                {/* <div className="flex space-x-4">
+                  <CustomButton className="bg-purple-600 hover:bg-purple-700 text-white px-6 md:px-8 py-2 md:py-3 rounded text-sm md:text-base"
+                        onClick={() => navigate("/register")}>
+                    Get Started
+                  </CustomButton>
+                </div> */}
               </div>
             </div>
-          </header>
-
-          {/* Dynamic Content Area */}
-          <div className="flex-1 overflow-auto">
-            <div className="p-6">
-              {renderContent()}
+            {/* Dynamic Content Area */}
+            <div className="">
+              <div className="p-6 flex flex-col gap-y-8 overflow-auto">
+                {/* {renderContent()} */}
+                <DashboardContent />
+                <MusicContent />
+                <EventsContent />
+              </div>
             </div>
-          </div>
 
-          {/* Player */}
-          <div className="bg-white border-t px-6 py-4">
-            <div className="flex items-center space-x-6">
-              <div className="flex-1">
-                <CustomSlider value={progress} onChange={setProgress} />
-                <div className="flex items-center justify-between mt-2">
-                  <div className="flex items-center space-x-4">
-                    <button onClick={() => setCurrentTrackIndex(i => (i - 1 + topTracks.length) % topTracks.length)}>
-                      <SkipBack className="w-5 h-5" />
-                    </button>
-                    <button onClick={() => setIsPlaying(!isPlaying)}>
-                      {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-                    </button>
-                    <button onClick={() => setCurrentTrackIndex(i => (i + 1) % topTracks.length)}>
-                      <SkipForward className="w-5 h-5" />
-                    </button>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Volume2 className="w-5 h-5" />
-                    <div className="w-32">
-                      <CustomSlider value={volume} onChange={setVolume} />
+            {/* Player */}
+            <div className="bg-white border-t px-6 py-4">
+              <div className="flex items-center space-x-6">
+                <div className="flex-1">
+                  <CustomSlider value={progress} onChange={setProgress} />
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center space-x-4">
+                      <button onClick={() => setCurrentTrackIndex(i => (i - 1 + topTracks.length) % topTracks.length)}>
+                        <SkipBack className="w-5 h-5" />
+                      </button>
+                      <button onClick={() => setIsPlaying(!isPlaying)}>
+                        {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+                      </button>
+                      <button onClick={() => setCurrentTrackIndex(i => (i + 1) % topTracks.length)}>
+                        <SkipForward className="w-5 h-5" />
+                      </button>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Volume2 className="w-5 h-5" />
+                      <div className="w-32">
+                        <CustomSlider value={volume} onChange={setVolume} />
+                      </div>
                     </div>
                   </div>
                 </div>

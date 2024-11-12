@@ -37,7 +37,12 @@ const Login = () => {
             isAuthenticated: true,
             token: token
           } })
-          navigate('/profile')
+          navigate('/dashboard',{
+            state:{
+              id: id,
+              username,
+            }
+          })
       }
     }catch(error){
       console.log(error)

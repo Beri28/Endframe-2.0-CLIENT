@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Menu, Bell, Settings, Search, ChevronDown, Music2, Users, Mic2, Radio, PlayCircle, Share2, Database, Calendar, BarChart3, FileText, RefreshCcw, PenSquare, Eye, ChevronRight } from 'lucide-react';
 import ReactApexChart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { artistData } from '../screens/Search';
 
 interface DashboardStats {
   label: string;
@@ -14,16 +17,25 @@ interface DashboardStats {
 
 
 const DashboardPage = () => {
+  const { state } = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [epkLink, setEpkLink] = useState<string | null>(null);
-
+  const [artist,setArtist]=useState<artistData>([])
   const generateEPKLink = () => {
     const uniqueId = Math.random().toString(36).substring(2, 15);
     const newLink = `https://yourmusic.com/epk/${uniqueId}`;
     setEpkLink(newLink);
     toast.success('EPK Link generated successfully!');
   };
-
+  const getArtist=async()=>{
+    try {
+      const artist=await axios.get<artistData>('http://localhost:8080/api/artist')
+    console.log(artist.data)
+    setArtist(artist.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const [activeSubmenu, setActiveSubmenu] = useState(null);
 
@@ -50,7 +62,7 @@ const DashboardPage = () => {
   };
 
   const stats: DashboardStats[] = [
-    { label: 'Total Streams', value: '2.5M', percentage: '0.43%', icon: <PlayCircle className="h-6 w-6 text-purple-500" /> },
+    { label: 'Total Streams', value: `${artist.rawData? artist.rawData.audiomackData?.stats?.plays_raw+artist.rawData.spotifyData?.monthlyListeners:""}`, percentage: '0.43%', icon: <PlayCircle className="h-6 w-6 text-purple-500" /> },
     { label: 'Monthly Listeners', value: '45,234', percentage: '4.35%', icon: <Users className="h-6 w-6 text-blue-500" /> },
     { label: 'Track Count', value: '125', percentage: '2.59%', icon: <Music2 className="h-6 w-6 text-green-500" /> },
     { label: 'Revenue', value: '$3,427', percentage: '0.95%', icon: <Database className="h-6 w-6 text-yellow-500" /> },
@@ -165,7 +177,9 @@ const DashboardPage = () => {
     </div>
   );
 
-
+  useEffect(()=>{
+    getArtist()
+  },[state.id])
   // Chart options with proper typing
   const lineChartOptions: ApexOptions = {
     chart: {
@@ -238,7 +252,7 @@ const DashboardPage = () => {
             <div className="p-6">
               <div className="flex items-center gap-3 mb-8">
                 <Music2 className="h-8 w-8 text-purple-500" />
-                <h2 className="text-xl font-bold">Music Studio</h2>
+                <h2 className="text-xl font-bold">{state.username}</h2>
               </div>
               <nav className="space-y-2">
                 {menuItems.map((item, index) => renderMenuItem(item, index))}
@@ -258,7 +272,7 @@ const DashboardPage = () => {
             >
               <Menu className="h-6 w-6 text-gray-300" />
             </button>
-            <h1 className="text-xl font-bold">Music Dashboard</h1>
+            <h1 className="text-xl font-bold font-[cursive]">CAMTUNE</h1>
           </div>
 
           <div className="flex items-center gap-6">
@@ -280,12 +294,12 @@ const DashboardPage = () => {
               </button>
               <div className="flex items-center gap-2">
                 <img
-                  src="/src/assets/a.png"
+                  src={artist.photos?artist.photos[0]:""}
                   alt="Profile"
                   className="h-10 w-10 rounded-full ring-2 ring-purple-500"
                 />
                 <div className="flex items-center gap-1">
-                  <span className="text-sm font-medium">User</span>
+                  <span className="text-sm font-medium">{state.usertName || ""}</span>
                   <ChevronDown className="h-4 w-4 text-gray-400" />
                 </div>
               </div>
@@ -295,7 +309,7 @@ const DashboardPage = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-8" onClick={()=>isMenuOpen?setIsMenuOpen(false):setIsMenuOpen(isMenuOpen)}>
         {/* EPK Generator */}
         <div className="mb-8 bg-gray-800/50 p-6 rounded-xl border border-gray-700">
           <div className="flex items-center justify-between">

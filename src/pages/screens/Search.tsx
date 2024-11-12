@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Search, ChevronDown, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CustomButton } from '../Home';
+import axios from 'axios';
 
 interface Template {
   id: string;
@@ -9,10 +10,44 @@ interface Template {
   title: string;
   description: string;
 }
-
+export type meidaLink={
+  platform:string
+  profileLink:string
+}
+export type spotify={
+  id:string
+  followers:number
+  monthlyListeners:number
+  topCities:[object]
+  topTracks:[object]
+}
+export type audiomack={
+  id:string
+  url_slug:string
+  bio:string
+  followers:number
+  stats:any
+  upload_count:any
+}
 interface FilterOption {
   id: string;
   label: string;
+}
+export interface artistData{
+    id:string;
+    firstName: string;
+    lastName: string;
+    artistName:string
+    email: string;
+    telephone: string;
+    country?: string;
+    profilePicture: string;
+    photos:string[];
+    socialMedia:meidaLink[];
+    rawData:{
+        spotifyData?:spotify;
+        audiomackData?:audiomack
+    }
 }
 
 const SearchPage = () => {
@@ -24,7 +59,7 @@ const SearchPage = () => {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [customFilter, setCustomFilter] = useState('');
   const [isCustomFilterOpen, setIsCustomFilterOpen] = useState(false);
-  
+  const [artists,setArtists]=useState<artistData[]>([])
   const TEMPLATES_PER_PAGE = 3;
   const TEMPLATES_PER_ROW = 3;
 
@@ -44,29 +79,33 @@ const SearchPage = () => {
   // Simulated API call - replace with your actual API
   const fetchTemplates = async () => {
     // Same templates as before
-    return [
-      { id: '1', image: "/src/assets/a.png", title: "Artist Bio Black", description: "Professional black theme with detailed sections" },
-      { id: '2', image: "/src/assets/a1.jpg", title: "DJ Push Electronic", description: "Modern electronic press kit" },
-      { id: '3', image: "/src/assets/a2.jpg", title: "DJ Enigma", description: "Neon-themed DJ profile" },
-      { id: '4', image: "/src/assets/a3.jpg", title: "Band Portfolio", description: "Multi-page band showcase" },
-      { id: '5', image: "/api/placeholder/400/500", title: "Artist Modern", description: "Contemporary artist layout" },
-      { id: '6', image: "/api/placeholder/400/500", title: "Photo Gallery", description: "Dynamic photo collection" },
-      { id: '7', image: "/api/placeholder/400/500", title: "DJ John", description: "Professional DJ biography" },
-      { id: '8', image: "/api/placeholder/400/500", title: "Big 40", description: "Featured artist template" },
-      { id: '9', image: "/api/placeholder/400/500", title: "Classic Band", description: "Vintage-style band template" },
-    ];
+    const artist=await axios.get<artistData[]>('http://localhost:8080/api/artists')
+    console.log(artist.data)
+    setArtists([...artist.data])
+    return [...artists]
+    // return [
+    //   { id: '1', image: "/src/assets/a.png", title: "Artist Bio Black", description: "Professional black theme with detailed sections" },
+    //   { id: '2', image: "/src/assets/a1.jpg", title: "DJ Push Electronic", description: "Modern electronic press kit" },
+    //   { id: '3', image: "/src/assets/a2.jpg", title: "DJ Enigma", description: "Neon-themed DJ profile" },
+    //   { id: '4', image: "/src/assets/a3.jpg", title: "Band Portfolio", description: "Multi-page band showcase" },
+    //   { id: '5', image: "/api/placeholder/400/500", title: "Artist Modern", description: "Contemporary artist layout" },
+    //   { id: '6', image: "/api/placeholder/400/500", title: "Photo Gallery", description: "Dynamic photo collection" },
+    //   { id: '7', image: "/api/placeholder/400/500", title: "DJ John", description: "Professional DJ biography" },
+    //   { id: '8', image: "/api/placeholder/400/500", title: "Big 40", description: "Featured artist template" },
+    //   { id: '9', image: "/api/placeholder/400/500", title: "Classic Band", description: "Vintage-style band template" },
+    // ];
   };
 
   const navigate = useNavigate();
 
-  const handleViewProfile = (template: Template) => {
+  const handleViewProfile = (template: artistData) => {
     // You can pass the user data as state to the profile page
-    navigate('/profile', { 
+    navigate('/profile/'+template.artistName, { 
       state: {
         userId: template.id,
-        name: template.title,
-        image: template.image,
-        description: template.description,
+        name: template.artistName,
+        image: template.photos[0],
+        bio: template.rawData.audiomackData?.bio,
         // Add any other relevant data you want to pass
       }
     });
@@ -266,7 +305,7 @@ const SearchPage = () => {
               </div>
 
               {/* Template Rows */}
-              {templateRows.map((row, rowIndex) => (
+              {/* {templateRows.map((row, rowIndex) => (
                 <div key={rowIndex} className="mb-12 px-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {row.map((template) => (
@@ -297,7 +336,39 @@ const SearchPage = () => {
                     ))}
                   </div>
                 </div>
-              ))}
+              ))} */}
+              <div className="mb-12 px-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {artists.map((artist)=>(
+                  <div key={artist.id} className="bg-white rounded-lg overflow-hidden shadow-lg">
+                  <div className="relative aspect-[4/5]">
+                    <img
+                      src={artist.photos[0]}
+                      alt={artist.artistName}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
+                      <h3 className="text-white text-xl font-bold">{artist.artistName}</h3>
+                      <p className="text-white/80 text-sm mt-2"></p>
+                    </div>
+                  </div>
+                  <div className="p-4 flex md:justify-between justify-center items-center flex-wrap gap-y-4">
+                  <button 
+                      onClick={() => handleViewProfile(artist)}
+                      className="px-8 py-2 bg-purple-500 text-white rounded-full hover:bg-indigo-700 transition-colors text-sm font-medium"
+                    >
+                      View Profile
+                    </button>
+                    <button className="px-8 py-2 border border-purple-500 text-purple-500 rounded-full hover:bg-gray-50 transition-colors text-sm font-medium">
+                      Request EPK
+                    </button>
+                  </div>
+                </div>
+                ))
+
+                }
+                </div>
+              </div>
 
               {/* Load More Button */}
               {displayedTemplates.length < templates.length && (
