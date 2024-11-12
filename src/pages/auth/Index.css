@@ -1,0 +1,98 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer components {
+  .brand-text {
+    @apply text-white text-3xl italic font-light mb-12;
+    font-family: 'Great Vibes', cursive;
+  }
+
+  .circular-images {
+    @apply relative w-full h-[600px];
+  }
+
+  .circle-main {
+    @apply absolute w-64 h-64 rounded-full overflow-hidden border-4 border-white;
+    top: 1rem;
+    right: 3rem;
+  }
+
+  .circle-main {
+    @apply absolute w-64 h-64 rounded-full overflow-hidden border-4 border-white;
+    top: 1rem;
+    right: 3rem;
+  }
+
+  .circle-secondary {
+    @apply absolute w-48 h-48 rounded-full overflow-hidden border-4 border-white;
+    top: 11rem;
+    left: 6rem;
+    z-index: 111;
+  }
+
+  .circle-accent {
+    @apply absolute w-32 h-32 rounded-full overflow-hidden border-4 border-white;
+    bottom: 5rem;
+    left: 4rem;
+  }
+
+  .circle-accent-alt {
+    @apply absolute w-32 h-32 rounded-full overflow-hidden border-4 border-white;
+    bottom: 5rem;
+    right: 5rem;
+  }
+
+  .form-group {
+    @apply relative mb-6;
+  }
+
+  .form-group-label {
+    @apply block text-sm text-gray-600 absolute -top-2.5 left-0 bg-white px-2 ml-3 z-10;
+  }
+
+  .form-group-input {
+    @apply w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-[#5D5DFF];
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .submit-button {
+    @apply w-full py-3.5 px-4 bg-[#5D5DFF] text-white rounded-lg 
+    hover:bg-[#4A4AFF] transition-colors font-normal text-base mt-8;
+  }
+
+  .social-buttons-container {
+    @apply grid grid-cols-2 gap-4 mt-8;
+  }
+
+  .social-button {
+    @apply py-2.5 px-4 border border-gray-200 rounded-lg flex items-center justify-center gap-2
+    hover:bg-gray-50 transition-colors text-gray-700 text-sm;
+  }
+
+  .social-icon {
+    @apply w-5 h-5;
+  }
+}
+
+/* Add floating label effect */
+.form-group::after {
+  content: '';
+  @apply absolute -top-0.5 left-0 right-0 h-px bg-gray-200;
+}
+
+/* Add subtle transitions */
+.form-group-input {
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* Hover effects for social buttons */
+.social-button:hover {
+  @apply border-[#5D5DFF];
+}
+
+/* Focus styles for inputs */
+.form-group-input:focus {
+  @apply border-[#5D5DFF];
+  box-shadow: 0 0 0 3px rgba(93, 93, 255, 0.1);
+}
